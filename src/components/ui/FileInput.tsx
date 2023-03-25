@@ -172,9 +172,9 @@ const FileInput = <TFieldValues extends FieldValues>({
           <p className="text-base font-medium sm:text-lg">Drop the file here</p>
         </div>
       ) : (
-        <div className="grid place-items-center gap-1 sm:px-10">
+        <div className="group grid place-items-center gap-1 sm:px-10">
           <Icons.logo
-            className="h-9 w-9 animate-spin text-gray-200"
+            className="h-9 w-9 text-gray-200 group-hover:animate-spin"
             aria-hidden="true"
           />
           <p className="mt-2 text-base font-medium text-gray-200 sm:text-lg">

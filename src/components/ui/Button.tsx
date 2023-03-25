@@ -1,19 +1,18 @@
 import LoadingDots from "@/components/ui/LoadingDots";
 import { Loader2 } from "lucide-react";
-import type { ButtonHTMLAttributes, DetailedHTMLProps } from "react";
-import { forwardRef } from "react";
+import * as React from "react";
 import { twMerge } from "tailwind-merge";
 
 type ButtonProps = {
   variant?: "primary" | "secondary" | "ghost";
   isLoading?: boolean;
   loadingVariant?: "spinner" | "dots";
-} & DetailedHTMLProps<
-  ButtonHTMLAttributes<HTMLButtonElement>,
+} & React.DetailedHTMLProps<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
   HTMLButtonElement
 >;
 
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       className = "",
@@ -29,8 +28,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         className={twMerge(
           "flex h-10 w-full items-center justify-center rounded-md border border-transparent px-4 py-2 text-base font-medium shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 active:scale-[0.99] disabled:pointer-events-none disabled:opacity-70 dark:focus:ring-gray-400 dark:focus:ring-offset-gray-800",
-          variant === "primary" &&
-            "bg-indigo-600 text-white hover:bg-indigo-700",
+          variant === "primary" && "bg-blue-600 text-white hover:bg-blue-700",
           variant === "secondary" &&
             "bg-gray-50 text-gray-900 hover:bg-gray-200",
           variant === "ghost" &&
