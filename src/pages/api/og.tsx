@@ -32,27 +32,27 @@ export default function handler(req: NextRequest) {
           <div tw="flex items-center text-3xl justify-center flex-col">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="125"
-              height="125"
-              viewBox="0 0 25 25"
-              fill="transparent"
+              width="164"
+              height="164"
+              viewBox="0 0 24 24"
               stroke="white"
+              fill="none"
               stroke-width="1"
               stroke-linecap="round"
               stroke-linejoin="round"
-              className="feather feather-package"
+              className="icon icon-tabler icon-tabler-pokeball"
             >
-              <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
-              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <circle cx="9" cy="9" r="9" transform="translate(3 3)" />
+              <circle cx="12" cy="12" r="3" />
+              <path d="M3 12h6m6 0h6" />
             </svg>
           </div>
           <div tw="flex max-w-4xl items-center justify-center flex-col mt-10">
-            <div tw="text-5xl font-bold whitespace-pre-wrap tracking-tight leading-tight text-white px-8">
+            <div tw="text-5xl font-bold tracking-tight leading-tight text-white px-8">
               {title}
             </div>
-            <div tw="mt-5 text-3xl text-gray-300 text-center font-normal whitespace-pre-wrap tracking-tight leading-tight px-20">
+            <div tw="mt-5 text-3xl text-gray-300 text-center font-normal tracking-tight leading-tight px-20">
               {description}
             </div>
           </div>
