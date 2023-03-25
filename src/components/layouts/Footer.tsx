@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer aria-label="footer" className="w-full bg-gray-800/40 py-5">
+    <footer aria-label="footer" className="w-full bg-gray-700/80 py-5">
       <div className="container grid max-w-6xl place-items-center text-center">
         <div className="text-sm text-gray-300 sm:text-base">
           Powered by{" "}

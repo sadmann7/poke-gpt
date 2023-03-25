@@ -1,7 +1,12 @@
-import type { NextApiRequestCloudinary } from "@/types/globals";
 import { cloudinary } from "@/utils/cloudinary";
 import { UploadApiOptions, UploadApiResponse } from "cloudinary";
-import type { NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
+
+export interface ExtendedNextApiRequest extends NextApiRequest {
+  body: {
+    base64: string;
+  };
+}
 
 export const config = {
   api: {
@@ -12,7 +17,7 @@ export const config = {
 };
 
 export default async function handler(
-  req: NextApiRequestCloudinary,
+  req: ExtendedNextApiRequest,
   res: NextApiResponse
 ) {
   const base64 = req.body.base64;

@@ -1,21 +1,6 @@
 import type { NextApiRequest } from "next";
 import type { DropEvent, FileRejection } from "react-dropzone";
 
-// next api request
-export interface NextApiRequestReplicate extends NextApiRequest {
-  body: {
-    theme: string;
-    room: string;
-    image: string;
-  };
-}
-
-export interface NextApiRequestCloudinary extends NextApiRequest {
-  body: {
-    base64: string;
-  };
-}
-
 // file input
 export type OriginalImage = {
   name: string;
@@ -37,30 +22,21 @@ export type UploadedFile = {
 };
 
 // replicate
-export type ControlNetBody = {
+export type ImageToPromptBody = {
   version: string;
   input: {
     image: string;
-    prompt: string;
-    a_prompt: string;
-    n_prompt: string;
-    num_samples?: string;
-    image_resolution?: string;
-    ddim_steps?: number;
-    scale?: number;
-    eta?: number;
-    detect_resolution?: number;
-    value_threshold?: number;
-    distance_threshold?: number;
   };
 };
 
-export type DeticBody = {
+export type TextToPokemonBody = {
   version: string;
   input: {
-    image: string;
-    vocabulary: "lvis" | "objects365" | "openimages" | "coco" | "custom";
-    custom_vocabulary: string;
+    prompt: string;
+    num_outputs: number;
+    num_inference_steps: number;
+    guidance_scale: number;
+    seed?: string;
   };
 };
 
@@ -88,21 +64,8 @@ export type PredictionResult = {
   webhook_completed: null;
 };
 
-// form
-export enum THEME {
-  MODERN = "Modern",
-  VINTAGE = "Vintage",
-  MINIMALIST = "Minimalist",
-  PROFESSIONAL = "Professional",
-  TROPICAL = "Tropical",
-}
-
-export enum ROOM {
-  LIVING_ROOM = "Living Room",
-  DINING_ROOM = "Dining Room",
-  BEDROOM = "Bedroom",
-  BATHROOM = "Bathroom",
-  OFFICE = "Office",
-  GAMING_ROOM = "Gaming Room",
-  KITCHEN = "Kitchen",
-}
+export type PromptResponseData = {
+  input: string | null;
+  output: string | null;
+  id: string;
+};

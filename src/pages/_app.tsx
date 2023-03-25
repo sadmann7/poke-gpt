@@ -24,7 +24,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <>
       <Head>
-        <title>Cronbase</title>
+        <title>PokeGPT</title>
       </Head>
       {getLayout(<Component {...pageProps} />)}
       <ToastWrapper />
