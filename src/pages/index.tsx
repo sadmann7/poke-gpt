@@ -108,10 +108,10 @@ const Home: NextPageWithLayout = () => {
         <title>PokeGPT</title>
       </Head>
       <main className="w-full pt-40 pb-32 sm:pt-32">
-        <div className="container flex max-w-6xl flex-col items-center justify-center gap-10">
-          <div className="grid max-w-3xl place-items-center gap-5">
+        <div className="container grid max-w-6xl place-items-center gap-12 sm:gap-14">
+          <div className="grid max-w-4xl place-items-center gap-5">
             <h1 className="w-full text-center text-4xl font-bold leading-tight text-gray-200 sm:text-6xl sm:leading-tight">
-              Generating <span className="text-indigo-500">pokemon</span> from
+              Generating <span className="text-indigo-500">pokemons</span> from
               your images using AI
             </h1>
             <p className="w-full text-center text-lg text-gray-400 sm:text-xl">
@@ -120,13 +120,13 @@ const Home: NextPageWithLayout = () => {
           </div>
           <form
             aria-label="Generate prompt"
-            className="grid w-full max-w-lg gap-10"
+            className="grid w-full max-w-lg gap-8"
             onSubmit={handleSubmit(onSubmit)}
           >
             <fieldset className="grid gap-5">
               <label
                 htmlFor="image"
-                className="text-sm font-medium sm:text-base"
+                className="sr-only text-sm font-medium sm:text-base"
               >
                 Upload your image
               </label>

@@ -1,5 +1,8 @@
-import type { NextApiRequest } from "next";
+import type { Dispatch, SetStateAction } from "react";
 import type { DropEvent, FileRejection } from "react-dropzone";
+
+// generics
+export type SetState<T> = Dispatch<SetStateAction<T>>;
 
 // file input
 export type OriginalImage = {

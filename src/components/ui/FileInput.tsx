@@ -1,22 +1,15 @@
-import { CheckCircle, DownloadCloud, Loader2 } from "lucide-react";
+import { Icons } from "@/components/Icons";
+import type { SetState } from "@/types/globals";
+import { CheckCircle, Loader2 } from "lucide-react";
 import Image from "next/image";
-import {
-  useCallback,
-  useEffect,
-  type Dispatch,
-  type SetStateAction
-} from "react";
-import {
-  useDropzone,
-  type Accept,
-  type ErrorCode,
-  type FileRejection
-} from "react-dropzone";
+import { useCallback, useEffect } from "react";
+import type { Accept, ErrorCode, FileRejection } from "react-dropzone";
+import { useDropzone } from "react-dropzone";
 import type {
   FieldValues,
   Path,
   PathValue,
-  UseFormSetValue
+  UseFormSetValue,
 } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { twMerge } from "tailwind-merge";
@@ -28,12 +21,11 @@ type FileInputProps<TFieldValues extends FieldValues> = {
   maxSize: number;
   maxFiles?: number;
   selectedFile: File | null;
-  setSelectedFile: Dispatch<SetStateAction<File | null>>;
+  setSelectedFile: SetState<File | null>;
   previewType?: "image" | "name";
   isUploading?: boolean;
   disabled?: boolean;
-  className?: string;
-};
+} & React.HTMLAttributes<HTMLDivElement>;
 
 const FileInput = <TFieldValues extends FieldValues>({
   name,
@@ -49,7 +41,8 @@ const FileInput = <TFieldValues extends FieldValues>({
   previewType = "image",
   isUploading = false,
   disabled = false,
-  className = "",
+  className,
+  ...props
 }: FileInputProps<TFieldValues>) => {
   const onDrop = useCallback(
     async (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
@@ -116,17 +109,18 @@ const FileInput = <TFieldValues extends FieldValues>({
           : "pointer-events-auto opacity-100",
         className
       )}
+      {...props}
     >
       <input {...getInputProps()} />
       {isUploading ? (
         <Loader2 className="h-16 w-16 animate-spin" />
       ) : selectedFile ? (
         previewType === "image" ? (
-          <div className="group relative aspect-square h-full max-h-[420px] w-full">
+          <div className="group relative aspect-square h-full max-h-[420px] w-full overflow-hidden rounded-md">
             {isDragActive ? (
               <div className="absolute inset-0 grid h-full w-full place-items-center bg-gray-900/70">
                 <div className="grid place-items-center gap-2 text-gray-200 sm:px-10">
-                  <DownloadCloud
+                  <Icons.logo
                     className={twMerge(
                       "h-9 w-9 group-hover:animate-bounce",
                       isDragActive ? "animate-bounce" : ""
@@ -139,7 +133,7 @@ const FileInput = <TFieldValues extends FieldValues>({
                 </div>
               </div>
             ) : (
-              <div className="absolute inset-0 grid h-full w-full place-items-center bg-gray-900/60 opacity-0 transition-opacity group-hover:opacity-100">
+              <div className="absolute inset-0 grid h-full w-full place-items-center rounded-md bg-gray-900/70 opacity-0 transition-opacity group-hover:opacity-100">
                 <div className="grid place-items-center gap-2">
                   <div className="flex items-center gap-2 text-gray-100">
                     <CheckCircle className="h-5 w-5" aria-hidden="true" />
@@ -157,7 +151,8 @@ const FileInput = <TFieldValues extends FieldValues>({
               src={URL.createObjectURL(selectedFile)}
               alt={selectedFile.name ?? "preview"}
               fill
-              className="absolute inset-0 -z-10 rounded-2xl object-cover"
+              className="absolute inset-0 -z-10 rounded-md object-cover"
+              loading="lazy"
             />
           </div>
         ) : (
@@ -167,7 +162,7 @@ const FileInput = <TFieldValues extends FieldValues>({
         )
       ) : isDragActive ? (
         <div className="grid place-items-center gap-2 text-gray-200 sm:px-10">
-          <DownloadCloud
+          <Icons.logo
             className={twMerge(
               "h-9 w-9 group-hover:animate-bounce",
               isDragActive ? "animate-bounce" : ""
@@ -178,7 +173,10 @@ const FileInput = <TFieldValues extends FieldValues>({
         </div>
       ) : (
         <div className="grid place-items-center gap-1 sm:px-10">
-          <DownloadCloud className="h-9 w-9 text-gray-200" aria-hidden="true" />
+          <Icons.logo
+            className="h-9 w-9 animate-spin text-gray-200"
+            aria-hidden="true"
+          />
           <p className="mt-2 text-base font-medium text-gray-200 sm:text-lg">
             Drag {`'n'`} drop file here, or click to select file
           </p>

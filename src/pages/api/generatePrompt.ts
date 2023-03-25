@@ -1,4 +1,4 @@
-import type { PromptResponseData } from "@/types/globals";
+import type { ImageToPromptBody, PromptResponseData } from "@/types/globals";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 interface ExtendedNextApiRequest extends NextApiRequest {
@@ -12,20 +12,22 @@ export default async function handler(
   res: NextApiResponse<PromptResponseData | string>
 ) {
   const { imageUrl } = req.body;
+
   // POST request to Replicate to start the generation process
+  const responseBody: ImageToPromptBody = {
+    version: "50adaf2d3ad20a6f911a8a9e3ccf777b263b8596fbd2c8fc26e8888f8a0edbb5",
+    input: {
+      image: imageUrl,
+    },
+  };
+
   let startResponse = await fetch("https://api.replicate.com/v1/predictions", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: "Token " + process.env.REPLICATE_API_KEY,
     },
-    body: JSON.stringify({
-      version:
-        "50adaf2d3ad20a6f911a8a9e3ccf777b263b8596fbd2c8fc26e8888f8a0edbb5",
-      input: {
-        image: imageUrl,
-      },
-    }),
+    body: JSON.stringify(responseBody),
   });
 
   let jsonStartResponse = await startResponse.json();

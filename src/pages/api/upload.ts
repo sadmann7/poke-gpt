@@ -23,7 +23,7 @@ export default async function handler(
   const base64 = req.body.base64;
   const uploadedImage = await cloudinary.uploader.upload(base64, {
     resource_type: "image",
-    folder: "photo-tweak",
+    folder: "poke-gpt",
     transformation: [
       {
         width: 600,
@@ -43,8 +43,8 @@ export default async function handler(
   const options: UploadApiOptions = {
     resource_type: "image",
     type: "upload",
-    prefix: "photo-tweak",
-    folder: "photo-tweak",
+    prefix: "poke-gpt",
+    folder: "poke-gpt",
   };
   const result: UploadApiResponse = await cloudinary.api.resources(options);
   const images = result.resources;
