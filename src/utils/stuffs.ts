@@ -1,5 +1,6 @@
 import { toast } from "react-hot-toast";
 
+// download file
 export const downloadFile = (
   url: string,
   filename: string,
@@ -27,4 +28,9 @@ export const downloadFile = (
       toast.error(error);
       setIsDownloading(false);
     });
+};
+
+// sanitize string
+export const sanitizeString = (str: string) => {
+  return str.replace(/[^a-zA-Z0-9]/g, "");
 };

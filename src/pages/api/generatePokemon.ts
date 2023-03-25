@@ -1,9 +1,9 @@
-import type { ImageToPromptBody, ResponseData } from "@/types/globals";
+import type { PromptToPokemonBody, ResponseData } from "@/types/globals";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 interface ExtendedNextApiRequest extends NextApiRequest {
   body: {
-    imageUrl: string;
+    prompt: string;
   };
 }
 
@@ -11,13 +11,18 @@ export default async function handler(
   req: ExtendedNextApiRequest,
   res: NextApiResponse<ResponseData | string>
 ) {
-  const { imageUrl } = req.body;
+  const { prompt } = req.body;
+
+  console.log(prompt);
 
   // POST request to Replicate to start the generation process
-  const responseBody: ImageToPromptBody = {
-    version: "50adaf2d3ad20a6f911a8a9e3ccf777b263b8596fbd2c8fc26e8888f8a0edbb5",
+  const responseBody: PromptToPokemonBody = {
+    version: "3554d9e699e09693d3fa334a79c58be9a405dd021d3e11281256d53185868912",
     input: {
-      image: imageUrl,
+      prompt,
+      num_outputs: 1,
+      num_inference_steps: 25,
+      guidance_scale: 7.5,
     },
   };
 
@@ -50,8 +55,10 @@ export default async function handler(
     });
     let jsonFinalResponse = await finalResponse.json();
 
+    console.log(jsonFinalResponse);
+
     if (jsonFinalResponse.status === "succeeded") {
-      generatedOutput = jsonFinalResponse.output;
+      generatedOutput = jsonFinalResponse.output[0] as string;
     } else if (jsonFinalResponse.status === "failed") {
       break;
     } else {

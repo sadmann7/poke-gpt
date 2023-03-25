@@ -2,13 +2,14 @@ import DefaultLayout from "@/components/layouts/DefaultLayout";
 import Button from "@/components/ui/Button";
 import FileInput from "@/components/ui/FileInput";
 import { NextPageWithLayout } from "@/pages/_app";
-import {
-  PromptResponseData,
-  type OriginalImage,
-  type UploadedFile,
+import type {
+  OriginalImage,
+  ResponseData,
+  UploadedFile,
 } from "@/types/globals";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Head from "next/head";
+import Image from "next/image";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -72,13 +73,14 @@ const Home: NextPageWithLayout = () => {
           url: uploadedFile.secureUrl,
         });
         setIsLoading(false);
-        generatePrompt(uploadedFile.secureUrl);
+        await generatePokemon(uploadedFile.secureUrl);
       }
     };
   };
 
-  // generate prompt from replicate
-  const generatePrompt = async (imageUrl: string) => {
+  // generate pokemon from replicate
+  const generatePokemon = async (imageUrl: string) => {
+    // generate prompt
     await new Promise((resolve) => setTimeout(resolve, 200));
     setIsLoading(true);
     const res = await fetch("/api/generatePrompt", {
@@ -89,18 +91,38 @@ const Home: NextPageWithLayout = () => {
       body: JSON.stringify({ imageUrl }),
     });
 
-    let response = (await res.json()) as PromptResponseData;
+    let response = (await res.json()) as ResponseData;
     if (res.status !== 200) {
       setError(response as any);
+      setIsLoading(false);
     } else {
       setGeneratedPrompt(response.output);
+      const res2 = await fetch("/api/generatePokemon", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: response.output }),
+      });
+
+      let response2 = (await res2.json()) as ResponseData;
+      if (res2.status !== 200) {
+        setError(response2 as any);
+        setIsLoading(false);
+      } else {
+        setGeneratedImage(response2.output);
+        setIsLoading(false);
+      }
     }
     setTimeout(() => {
       setIsLoading(false);
     }, 1300);
   };
 
-  console.log(generatedPrompt);
+  console.log({
+    generatedPrompt,
+    generatedImage,
+  });
 
   return (
     <>

@@ -32,7 +32,7 @@ export type ImageToPromptBody = {
   };
 };
 
-export type TextToPokemonBody = {
+export type PromptToPokemonBody = {
   version: string;
   input: {
     prompt: string;
@@ -67,8 +67,8 @@ export type PredictionResult = {
   webhook_completed: null;
 };
 
-export type PromptResponseData = {
+export type ResponseData = {
+  id: string;
   input: string | null;
   output: string | null;
-  id: string;
 };
