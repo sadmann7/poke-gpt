@@ -5,7 +5,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const response = await fetch(
-    `https://api.replicate.com/v1/predictions/${req.query.id}}`,
+    `https://api.replicate.com/v1/predictions/${req.query.id} `,
     {
       headers: {
         Authorization: `Token ${process.env.REPLICATE_API_KEY}`,

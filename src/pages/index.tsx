@@ -6,8 +6,10 @@ import FileInput from "@/components/ui/FileInput";
 import Toggle from "@/components/ui/Toggle";
 import type { NextPageWithLayout } from "@/pages/_app";
 import type {
+  ImageToPromptBody,
   OriginalImage,
-  ResponseData,
+  PredictionResult,
+  PromptToPokemonBody,
   UploadedFile,
 } from "@/types/globals";
 import { downloadFile } from "@/utils/stuffs";
@@ -83,40 +85,138 @@ const Home: NextPageWithLayout = () => {
     };
   };
 
+  // // generate pokemon from replicate
+  // const generatePokemon = async (imageUrl: string) => {
+  //   await new Promise((resolve) => setTimeout(resolve, 200));
+  //   setIsLoading(true);
+  //   const res = await fetch("/api/generatePrompt", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({ imageUrl }),
+  //   });
+
+  //   let response = (await res.json()) as ResponseData;
+  //   if (res.status !== 200) {
+  //     setError(response as any);
+  //     setIsLoading(false);
+  //   } else {
+  //     setGeneratedPrompt(response.output);
+  //     await new Promise((resolve) => setTimeout(resolve, 200));
+  //     const res2 = await fetch("/api/generatePokemon", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ prompt: response.output }),
+  //     });
+
+  //     let response2 = (await res2.json()) as ResponseData;
+  //     if (res2.status !== 200) {
+  //       setError(response2 as any);
+  //       setIsLoading(false);
+  //     } else {
+  //       setGeneratedImage(response2.output);
+  //       setIsLoading(false);
+  //     }
+  //   }
+
+  //   setTimeout(() => {
+  //     setIsLoading(false);
+  //   }, 1300);
+  // };
+
   // generate pokemon from replicate
   const generatePokemon = async (imageUrl: string) => {
-    await new Promise((resolve) => setTimeout(resolve, 200));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     setIsLoading(true);
-    const res = await fetch("/api/generatePrompt", {
+    const response = await fetch("/api/prompts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ imageUrl }),
+      body: JSON.stringify({
+        imageUrl,
+      }),
     });
+    let prediction: PredictionResult<ImageToPromptBody["input"]> =
+      await response.json();
 
-    let response = (await res.json()) as ResponseData;
-    if (res.status !== 200) {
-      setError(response as any);
+    if (response.status !== 201) {
+      setError(prediction.error);
       setIsLoading(false);
-    } else {
-      setGeneratedPrompt(response.output);
-      await new Promise((resolve) => setTimeout(resolve, 200));
-      const res2 = await fetch("/api/generatePokemon", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ prompt: response.output }),
-      });
+      return;
+    }
+    setGeneratedPrompt(prediction.output);
 
-      let response2 = (await res2.json()) as ResponseData;
-      if (res2.status !== 200) {
-        setError(response2 as any);
+    while (
+      prediction.status !== "succeeded" &&
+      prediction.status !== "failed"
+    ) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await fetch(`/api/prompts/${prediction.id}`);
+      prediction = await response.json();
+      if (response.status !== 200) {
+        setError(prediction.error);
         setIsLoading(false);
+        return;
+      }
+      if (prediction.status === "succeeded") {
+        if (!prediction.output) return;
+        setGeneratedPrompt(prediction.output);
+
+        const response2 = await fetch("/api/pokemons", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            prompt: prediction.output,
+          }),
+        });
+
+        let prediction2: PredictionResult<PromptToPokemonBody["input"]> =
+          await response2.json();
+
+        if (response2.status !== 201) {
+          setError(prediction2.error);
+          setIsLoading(false);
+          return;
+        }
+
+        while (
+          prediction2.status !== "succeeded" &&
+          prediction2.status !== "failed"
+        ) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          const response2 = await fetch(`/api/pokemons/${prediction2.id}`);
+          prediction2 = await response2.json();
+          if (response2.status !== 200) {
+            setError(prediction2.error);
+            setIsLoading(false);
+            return;
+          }
+          if (prediction2.status === "succeeded") {
+            if (!prediction2.output) return;
+            setGeneratedImage(prediction2.output[0]);
+            break;
+          } else if (prediction2.status === "failed") {
+            setError(prediction2.error);
+            setIsLoading(false);
+            break;
+          } else {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+          }
+        }
+        setIsLoading(false);
+        break;
+      } else if (prediction.status === "failed") {
+        setError(prediction.error);
+        setIsLoading(false);
+        break;
       } else {
-        setGeneratedImage(response2.output);
-        setIsLoading(false);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
 
