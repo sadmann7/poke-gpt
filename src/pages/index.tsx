@@ -174,7 +174,6 @@ const Home: NextPageWithLayout = () => {
           >
             Mock generate pokemon
           </Button> */}
-
           {isLoading ? (
             <div className="grid w-full place-items-center">
               <Pokeball className="h-60 w-60" isGenerated={!!generatedImage} />
