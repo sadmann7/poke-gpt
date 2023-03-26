@@ -101,6 +101,7 @@ const Home: NextPageWithLayout = () => {
       setIsLoading(false);
     } else {
       setGeneratedPrompt(response.output);
+      await new Promise((resolve) => setTimeout(resolve, 200));
       const res2 = await fetch("/api/generatePokemon", {
         method: "POST",
         headers: {
@@ -118,6 +119,7 @@ const Home: NextPageWithLayout = () => {
         setIsLoading(false);
       }
     }
+
     setTimeout(() => {
       setIsLoading(false);
     }, 1300);

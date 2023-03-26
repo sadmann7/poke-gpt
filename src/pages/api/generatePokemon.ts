@@ -7,14 +7,6 @@ interface ExtendedNextApiRequest extends NextApiRequest {
   };
 }
 
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: "2mb",
-    },
-  },
-};
-
 export default async function handler(
   req: ExtendedNextApiRequest,
   res: NextApiResponse<ResponseData | string>
