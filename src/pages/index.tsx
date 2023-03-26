@@ -141,7 +141,7 @@ const Home: NextPageWithLayout = () => {
   //   }, 1300);
   // };
 
-  // // generate pokemon from replicate
+  // generate pokemon from replicate
   const generatePokemon = async (imageUrl: string) => {
     await new Promise((resolve) => setTimeout(resolve, 500));
     setIsLoading(true);
@@ -236,7 +236,7 @@ const Home: NextPageWithLayout = () => {
 
     setTimeout(() => {
       setIsLoading(false);
-    }, 1500);
+    }, 1000);
   };
 
   console.log({
