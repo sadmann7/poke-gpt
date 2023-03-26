@@ -124,37 +124,32 @@ const Home: NextPageWithLayout = () => {
     }
     setTimeout(() => {
       setIsLoading(false);
-    }, 1300);
+    }, 600);
   };
 
-  console.log({
-    generatedPrompt,
-    generatedImage,
-  });
-
-  // moch pokemon generation
-  const mockGeneratePokemon = () => {
-    setOriginalImage(null);
-    setGeneratedPrompt(null);
-    setGeneratedImage(null);
-    setError(null);
-    setSelectedFile(null);
-    reset();
-    setIsLoading(true);
-    setTimeout(() => {
-      setOriginalImage({
-        name: "tumblr_9db78b4044f75f24f612f4943501e419_2b620c58_2048",
-        url: "https://res.cloudinary.com/dasxoa9r4/image/upload/v1679751365/poke-gpt/pepgd5gycsvpzjmvjr0f.jpg",
-      });
-      setGeneratedPrompt("A pokemon with a blue body and a red head");
-      setGeneratedImage(
-        "https://res.cloudinary.com/dasxoa9r4/image/upload/v1679751365/poke-gpt/pepgd5gycsvpzjmvjr0f.jpg"
-      );
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 600);
-    }, 16000);
-  };
+  // // moch pokemon generation
+  // const mockGeneratePokemon = () => {
+  //   setOriginalImage(null);
+  //   setGeneratedPrompt(null);
+  //   setGeneratedImage(null);
+  //   setError(null);
+  //   setSelectedFile(null);
+  //   reset();
+  //   setIsLoading(true);
+  //   setTimeout(() => {
+  //     setOriginalImage({
+  //       name: "tumblr_9db78b4044f75f24f612f4943501e419_2b620c58_2048",
+  //       url: "https://res.cloudinary.com/dasxoa9r4/image/upload/v1679751365/poke-gpt/pepgd5gycsvpzjmvjr0f.jpg",
+  //     });
+  //     setGeneratedPrompt("A pokemon with a blue body and a red head");
+  //     setGeneratedImage(
+  //       "https://res.cloudinary.com/dasxoa9r4/image/upload/v1679751365/poke-gpt/pepgd5gycsvpzjmvjr0f.jpg"
+  //     );
+  //     setTimeout(() => {
+  //       setIsLoading(false);
+  //     }, 600);
+  //   }, 16000);
+  // };
 
   return (
     <>
@@ -172,21 +167,22 @@ const Home: NextPageWithLayout = () => {
               Upload your image and get a pokemon generated from it
             </p>
           </div>
-          <Button
+          {/* <Button
             aria-label="Mock generate pokemon"
             className="w-fit"
             onClick={mockGeneratePokemon}
           >
             Mock generate pokemon
-          </Button>
+          </Button> */}
+
           {isLoading ? (
-            <div className="grid w-full place-items-center gap-5">
+            <div className="grid w-full place-items-center">
+              <Pokeball className="h-60 w-60" isGenerated={!!generatedImage} />
               <h2 className="text-lg font-medium text-gray-50 sm:text-xl">
                 Generating pokemon...
               </h2>
-              <Pokeball className="h-60 w-60" isGenerated={!!generatedImage} />
-              <p className="text-sm text-gray-400 sm:text-base">
-                This might take a while
+              <p className="mt-2 text-sm text-gray-400 sm:text-base">
+                This usually takes around 30 to 40 seconds
               </p>
             </div>
           ) : error ? (
@@ -199,7 +195,14 @@ const Home: NextPageWithLayout = () => {
               <Button
                 aria-label="Try again"
                 className="w-fit"
-                onClick={mockGeneratePokemon}
+                onClick={() => {
+                  setError(null);
+                  setOriginalImage(null);
+                  setGeneratedPrompt(null);
+                  setGeneratedImage(null);
+                  setSelectedFile(null);
+                  reset();
+                }}
               >
                 Try again
               </Button>
@@ -250,6 +253,7 @@ const Home: NextPageWithLayout = () => {
                   </div>
                 </div>
               )}
+
               <div className="flex w-full max-w-sm flex-col items-center justify-center gap-4 sm:flex-row">
                 <Button
                   aria-label="Generate another pokemon"
