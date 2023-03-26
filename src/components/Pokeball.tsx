@@ -1,24 +1,30 @@
 import styles from "@/styles/pokeball.module.css";
+import type { LucideProps } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-const Pokeball = ({ isLoading }: { isLoading: boolean }) => {
+interface PokeballProps extends LucideProps {
+  isGenerated: boolean;
+}
+
+const Pokeball = ({ isGenerated, ...props }: PokeballProps) => {
   const pokeballRef = useRef<SVGSVGElement>(null);
-  const [isFetching, setIsFetching] = useState(true);
 
   useEffect(() => {
     if (!pokeballRef.current) return;
     pokeballRef.current.classList.add(styles.loading);
     pokeballRef.current.classList.toggle(
-      isFetching ? styles.success : styles.failure
+      isGenerated ? styles.success : styles.failure
     );
-  }, [isFetching]);
-
-  setTimeout(() => {
-    setIsFetching(false);
-  }, 4000);
+  }, [isGenerated]);
 
   return (
-    <svg ref={pokeballRef} viewBox="0 0 100 100" width="150" height="150">
+    <svg
+      ref={pokeballRef}
+      viewBox="0 0 100 100"
+      width="150"
+      height="150"
+      {...props}
+    >
       <g transform="translate(50 50) scale(0.8)">
         <g className={styles.stars} transform="scale(0)">
           <path

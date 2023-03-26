@@ -2,7 +2,7 @@ import DefaultLayout from "@/components/layouts/DefaultLayout";
 import Pokeball from "@/components/Pokeball";
 import Button from "@/components/ui/Button";
 import FileInput from "@/components/ui/FileInput";
-import { NextPageWithLayout } from "@/pages/_app";
+import type { NextPageWithLayout } from "@/pages/_app";
 import type {
   OriginalImage,
   ResponseData,
@@ -10,6 +10,7 @@ import type {
 } from "@/types/globals";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Head from "next/head";
+import Image from "next/image";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -123,6 +124,22 @@ const Home: NextPageWithLayout = () => {
     generatedImage,
   });
 
+  // moch pokemon generation
+  const mockGeneratePokemon = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setGeneratedPrompt("A pokemon with a blue body and a red head");
+      setOriginalImage({
+        name: "tumblr_9db78b4044f75f24f612f4943501e419_2b620c58_2048",
+        url: "https://res.cloudinary.com/dasxoa9r4/image/upload/v1679751365/poke-gpt/pepgd5gycsvpzjmvjr0f.jpg",
+      });
+      setGeneratedImage(
+        "https://res.cloudinary.com/dasxoa9r4/image/upload/v1679751365/poke-gpt/pepgd5gycsvpzjmvjr0f.jpg"
+      );
+      setIsLoading(false);
+    }, 16000);
+  };
+
   return (
     <>
       <Head>
@@ -139,43 +156,87 @@ const Home: NextPageWithLayout = () => {
               Upload your image and get a pokemon generated from it
             </p>
           </div>
-          <form
-            aria-label="Generate prompt"
-            className="grid w-full max-w-lg gap-8"
-            onSubmit={handleSubmit(onSubmit)}
+          <Button
+            aria-label="Mock generate pokemon"
+            onClick={mockGeneratePokemon}
+            className="w-full max-w-lg"
           >
-            <fieldset className="grid gap-5">
-              <label
-                htmlFor="image"
-                className="sr-only text-sm font-medium sm:text-base"
-              >
-                Upload your image
-              </label>
-              <FileInput
-                name="image"
-                setValue={setValue}
-                maxSize={10 * 1024 * 1024}
-                selectedFile={selectedFile}
-                setSelectedFile={setSelectedFile}
-                disabled={isLoading}
-              />
-              {formState.errors.image?.message ? (
-                <p className="text-sm font-medium text-red-500">
-                  {formState.errors.image.message}
-                </p>
-              ) : null}
-            </fieldset>
-            <Button
-              aria-label="Generate pokemon"
-              className="w-full"
-              isLoading={isLoading}
-              loadingVariant="dots"
-              disabled={isLoading}
+            Mock generate pokemon
+          </Button>
+
+          {isLoading ? (
+            <Pokeball className="h-60 w-60" isGenerated={!!generatedImage} />
+          ) : !originalImage ? (
+            <form
+              aria-label="Generate pokemon form"
+              className="grid w-full max-w-lg gap-8"
+              onSubmit={handleSubmit(onSubmit)}
             >
-              Generate pokemon
-            </Button>
-          </form>
-          <Pokeball isLoading={!isLoading} />
+              <fieldset className="grid gap-5">
+                <label
+                  htmlFor="image"
+                  className="sr-only text-sm font-medium sm:text-base"
+                >
+                  Upload your image
+                </label>
+                <FileInput
+                  name="image"
+                  setValue={setValue}
+                  maxSize={10 * 1024 * 1024}
+                  selectedFile={selectedFile}
+                  setSelectedFile={setSelectedFile}
+                  disabled={isLoading}
+                />
+                {formState.errors.image?.message ? (
+                  <p className="text-sm font-medium text-red-500">
+                    {formState.errors.image.message}
+                  </p>
+                ) : null}
+              </fieldset>
+              <Button
+                aria-label="Generate pokemon"
+                className="w-full"
+                isLoading={isLoading}
+                loadingVariant="dots"
+                disabled={isLoading}
+              >
+                Generate pokemon
+              </Button>
+            </form>
+          ) : (
+            <div className="flex w-full flex-col items-center gap-5 sm:flex-row">
+              <div className="grid w-full place-items-center gap-2 sm:w-1/2">
+                <h2 className="text-base font-medium text-white sm:text-lg">
+                  Original image
+                </h2>
+                <Image
+                  src={originalImage.url}
+                  alt={originalImage.name ?? "original"}
+                  width={480}
+                  height={480}
+                  className="rounded-xl"
+                  priority
+                />
+              </div>
+              <div className="grid w-full place-items-center gap-2 sm:w-1/2">
+                <h2 className="text-base font-medium text-white sm:text-lg">
+                  Generated pokemon
+                </h2>
+                {generatedImage ? (
+                  <Image
+                    src={generatedImage as string}
+                    alt={"Generated pokemon"}
+                    width={480}
+                    height={480}
+                    className="rounded-xl"
+                    priority
+                  />
+                ) : (
+                  <div className="aspect-square w-full">Skeleton loading</div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </>
