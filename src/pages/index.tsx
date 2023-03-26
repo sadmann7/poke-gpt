@@ -127,29 +127,29 @@ const Home: NextPageWithLayout = () => {
     }, 600);
   };
 
-  // // moch pokemon generation
-  // const mockGeneratePokemon = () => {
-  //   setOriginalImage(null);
-  //   setGeneratedPrompt(null);
-  //   setGeneratedImage(null);
-  //   setError(null);
-  //   setSelectedFile(null);
-  //   reset();
-  //   setIsLoading(true);
-  //   setTimeout(() => {
-  //     setOriginalImage({
-  //       name: "tumblr_9db78b4044f75f24f612f4943501e419_2b620c58_2048",
-  //       url: "https://res.cloudinary.com/dasxoa9r4/image/upload/v1679751365/poke-gpt/pepgd5gycsvpzjmvjr0f.jpg",
-  //     });
-  //     setGeneratedPrompt("A pokemon with a blue body and a red head");
-  //     setGeneratedImage(
-  //       "https://res.cloudinary.com/dasxoa9r4/image/upload/v1679751365/poke-gpt/pepgd5gycsvpzjmvjr0f.jpg"
-  //     );
-  //     setTimeout(() => {
-  //       setIsLoading(false);
-  //     }, 600);
-  //   }, 16000);
-  // };
+  // moch pokemon generation
+  const mockGeneratePokemon = () => {
+    setOriginalImage(null);
+    setGeneratedPrompt(null);
+    setGeneratedImage(null);
+    setError(null);
+    setSelectedFile(null);
+    reset();
+    setIsLoading(true);
+    setTimeout(() => {
+      setOriginalImage({
+        name: "tumblr_9db78b4044f75f24f612f4943501e419_2b620c58_2048",
+        url: "https://res.cloudinary.com/dasxoa9r4/image/upload/v1679751365/poke-gpt/pepgd5gycsvpzjmvjr0f.jpg",
+      });
+      setGeneratedPrompt("A pokemon with a blue body and a red head");
+      setGeneratedImage(
+        "https://res.cloudinary.com/dasxoa9r4/image/upload/v1679751365/poke-gpt/pepgd5gycsvpzjmvjr0f.jpg"
+      );
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 600);
+    }, 16000);
+  };
 
   return (
     <>
@@ -167,13 +167,13 @@ const Home: NextPageWithLayout = () => {
               Upload your image and get a pokemon generated from it
             </p>
           </div>
-          {/* <Button
+          <Button
             aria-label="Mock generate pokemon"
             className="w-fit"
             onClick={mockGeneratePokemon}
           >
             Mock generate pokemon
-          </Button> */}
+          </Button>
           {isLoading ? (
             <div className="grid w-full place-items-center">
               <Pokeball className="h-60 w-60" isGenerated={!!generatedImage} />
