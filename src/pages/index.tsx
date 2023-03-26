@@ -6,10 +6,8 @@ import FileInput from "@/components/ui/FileInput";
 import Toggle from "@/components/ui/Toggle";
 import type { NextPageWithLayout } from "@/pages/_app";
 import type {
-  ImageToPromptBody,
   OriginalImage,
-  PredictionResult,
-  PromptToPokemonBody,
+  ResponseData,
   UploadedFile,
 } from "@/types/globals";
 import { downloadFile } from "@/utils/stuffs";
@@ -17,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangle, Download, Loader2, Upload } from "lucide-react";
 import Head from "next/head";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
@@ -40,17 +38,6 @@ const Home: NextPageWithLayout = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
-  const fileFieldsetRef = useRef<HTMLFieldSetElement>(null);
-
-  // scroll to file input on image selection
-  useEffect(() => {
-    if (!selectedFile || !fileFieldsetRef.current) return;
-    const offset = fileFieldsetRef.current.offsetTop - 100;
-    window.scrollTo({
-      top: offset,
-      behavior: "smooth",
-    });
-  }, [selectedFile]);
 
   // react-hook-form
   const { handleSubmit, formState, setValue, reset } = useForm<Inputs>({
@@ -96,147 +83,67 @@ const Home: NextPageWithLayout = () => {
     };
   };
 
-  // * this method crosses vercel's 10s limit for lambda functions (because of 2 responses maybe)
-  // * so we need to run the generation loop from the frontend
-  // // generate pokemon from replicate
-  // const generatePokemon = async (imageUrl: string) => {
-  //   await new Promise((resolve) => setTimeout(resolve, 200));
-  //   setIsLoading(true);
-  //   const res = await fetch("/api/generatePrompt", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({ imageUrl }),
-  //   });
-
-  //   let response = (await res.json()) as ResponseData;
-  //   if (res.status !== 200) {
-  //     setError(response as any);
-  //     setIsLoading(false);
-  //   } else {
-  //     setGeneratedPrompt(response.output);
-  //     await new Promise((resolve) => setTimeout(resolve, 200));
-  //     const res2 = await fetch("/api/generatePokemon", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ prompt: response.output }),
-  //     });
-
-  //     let response2 = (await res2.json()) as ResponseData;
-  //     if (res2.status !== 200) {
-  //       setError(response2 as any);
-  //       setIsLoading(false);
-  //     } else {
-  //       setGeneratedImage(response2.output);
-  //       setIsLoading(false);
-  //     }
-  //   }
-
-  //   setTimeout(() => {
-  //     setIsLoading(false);
-  //   }, 1300);
-  // };
-
   // generate pokemon from replicate
   const generatePokemon = async (imageUrl: string) => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 200));
     setIsLoading(true);
-    const response = await fetch("/api/prompts", {
+    const res = await fetch("/api/generatePrompt", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        imageUrl,
-      }),
+      body: JSON.stringify({ imageUrl }),
     });
-    let prediction: PredictionResult<ImageToPromptBody["input"]> =
-      await response.json();
 
-    if (response.status !== 201) {
-      setError(prediction.error);
-      setIsLoading(false);
-      return;
-    }
-    setGeneratedPrompt(prediction.output);
-
-    while (
-      prediction.status !== "succeeded" &&
-      prediction.status !== "failed"
-    ) {
+    let response = (await res.json()) as ResponseData;
+    if (res.status !== 200) {
+      setError(response as any);
+    } else {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      const response = await fetch(`/api/prompts/${prediction.id}`);
-      prediction = await response.json();
-      if (response.status !== 200) {
-        setError(prediction.error);
-        setIsLoading(false);
-        return;
-      }
-      if (prediction.status === "succeeded") {
-        if (!prediction.output) return;
-        setGeneratedPrompt(prediction.output);
+      setGeneratedPrompt(response.output);
+      const res2 = await fetch("/api/generatePokemon", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: response.output }),
+      });
 
-        const response2 = await fetch("/api/pokemons", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            prompt: prediction.output,
-          }),
-        });
-
-        let prediction2: PredictionResult<PromptToPokemonBody["input"]> =
-          await response2.json();
-
-        if (response2.status !== 201) {
-          setError(prediction2.error);
-          setIsLoading(false);
-          return;
-        }
-
-        while (
-          prediction2.status !== "succeeded" &&
-          prediction2.status !== "failed"
-        ) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          const response2 = await fetch(`/api/pokemons/${prediction2.id}`);
-          prediction2 = await response2.json();
-          if (response2.status !== 200) {
-            setError(prediction2.error);
-            setIsLoading(false);
-            return;
-          }
-          if (prediction2.status === "succeeded") {
-            if (!prediction2.output) return;
-            setGeneratedImage(prediction2.output[0]);
-            break;
-          } else if (prediction2.status === "failed") {
-            setError(prediction2.error);
-            setIsLoading(false);
-            break;
-          } else {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-          }
-        }
-        setIsLoading(false);
-        break;
-      } else if (prediction.status === "failed") {
-        setError(prediction.error);
-        setIsLoading(false);
-        break;
+      let response2 = (await res2.json()) as ResponseData;
+      if (res2.status !== 200) {
+        setError(response2 as any);
       } else {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setGeneratedImage(response2.output);
       }
     }
-
     setTimeout(() => {
       setIsLoading(false);
     }, 1300);
   };
+
+  // // moch pokemon generation
+  // const mockGeneratePokemon = () => {
+  //   setOriginalImage(null);
+  //   setGeneratedPrompt(null);
+  //   setGeneratedImage(null);
+  //   setError(null);
+  //   setSelectedFile(null);
+  //   reset();
+  //   setIsLoading(true);
+  //   setTimeout(() => {
+  //     setOriginalImage({
+  //       name: "tumblr_9db78b4044f75f24f612f4943501e419_2b620c58_2048",
+  //       url: "https://res.cloudinary.com/dasxoa9r4/image/upload/v1679751365/poke-gpt/pepgd5gycsvpzjmvjr0f.jpg",
+  //     });
+  //     setGeneratedPrompt("A pokemon with a blue body and a red head");
+  //     setGeneratedImage(
+  //       "https://res.cloudinary.com/dasxoa9r4/image/upload/v1679751365/poke-gpt/pepgd5gycsvpzjmvjr0f.jpg"
+  //     );
+  //     setTimeout(() => {
+  //       setIsLoading(false);
+  //     }, 600);
+  //   }, 16000);
+  // };
 
   console.log({
     originalImage,
@@ -260,6 +167,13 @@ const Home: NextPageWithLayout = () => {
               Upload your image and get a pokemon generated from it
             </p>
           </div>
+          {/* <Button
+            aria-label="Mock generate pokemon"
+            className="w-fit"
+            onClick={mockGeneratePokemon}
+          >
+            Mock generate pokemon
+          </Button> */}
           {isLoading ? (
             <div className="grid w-full place-items-center">
               <Pokeball className="h-60 w-60" isGenerated={!!generatedImage} />
@@ -272,10 +186,7 @@ const Home: NextPageWithLayout = () => {
             </div>
           ) : error ? (
             <div role="alert" className="grid w-full place-items-center gap-5">
-              <AlertTriangle
-                className="h-24 w-24 animate-pulse text-red-500"
-                aria-hidden="true"
-              />
+              <AlertTriangle className="h-24 w-24 animate-pulse text-red-400" />
               <h2 className="text-lg font-medium text-gray-50 sm:text-xl">
                 Something went wrong
               </h2>
@@ -341,6 +252,7 @@ const Home: NextPageWithLayout = () => {
                   </div>
                 </div>
               )}
+
               <div className="flex w-full max-w-sm flex-col items-center justify-center gap-4 sm:flex-row">
                 <Button
                   aria-label="Generate another pokemon"
@@ -387,7 +299,7 @@ const Home: NextPageWithLayout = () => {
               className="grid w-full max-w-lg place-items-center gap-8"
               onSubmit={handleSubmit(onSubmit)}
             >
-              <fieldset ref={fileFieldsetRef} className="grid w-full gap-5">
+              <fieldset className="grid w-full gap-5">
                 <label htmlFor="image" className="sr-only">
                   Upload your image
                 </label>
