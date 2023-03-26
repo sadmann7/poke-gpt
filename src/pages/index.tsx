@@ -17,7 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangle, Download, Loader2, Upload } from "lucide-react";
 import Head from "next/head";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
@@ -40,6 +40,17 @@ const Home: NextPageWithLayout = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
+  const fileFieldsetRef = useRef<HTMLFieldSetElement>(null);
+
+  // scroll to file input on image selection
+  useEffect(() => {
+    if (!selectedFile || !fileFieldsetRef.current) return;
+    const offset = fileFieldsetRef.current.offsetTop - 100;
+    window.scrollTo({
+      top: offset,
+      behavior: "smooth",
+    });
+  }, [selectedFile]);
 
   // react-hook-form
   const { handleSubmit, formState, setValue, reset } = useForm<Inputs>({
@@ -227,6 +238,12 @@ const Home: NextPageWithLayout = () => {
     }, 1300);
   };
 
+  console.log({
+    originalImage,
+    generatedPrompt,
+    generatedImage,
+  });
+
   return (
     <>
       <Head>
@@ -255,7 +272,10 @@ const Home: NextPageWithLayout = () => {
             </div>
           ) : error ? (
             <div role="alert" className="grid w-full place-items-center gap-5">
-              <AlertTriangle className="h-24 w-24 animate-pulse text-red-400" />
+              <AlertTriangle
+                className="h-24 w-24 animate-pulse text-red-500"
+                aria-hidden="true"
+              />
               <h2 className="text-lg font-medium text-gray-50 sm:text-xl">
                 Something went wrong
               </h2>
@@ -321,7 +341,6 @@ const Home: NextPageWithLayout = () => {
                   </div>
                 </div>
               )}
-
               <div className="flex w-full max-w-sm flex-col items-center justify-center gap-4 sm:flex-row">
                 <Button
                   aria-label="Generate another pokemon"
@@ -368,7 +387,7 @@ const Home: NextPageWithLayout = () => {
               className="grid w-full max-w-lg place-items-center gap-8"
               onSubmit={handleSubmit(onSubmit)}
             >
-              <fieldset className="grid w-full gap-5">
+              <fieldset ref={fileFieldsetRef} className="grid w-full gap-5">
                 <label htmlFor="image" className="sr-only">
                   Upload your image
                 </label>
