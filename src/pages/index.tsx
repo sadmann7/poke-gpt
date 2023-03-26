@@ -97,9 +97,7 @@ const Home: NextPageWithLayout = () => {
 
     let response = (await res.json()) as ResponseData;
     if (res.status !== 200) {
-      response instanceof Object
-        ? setError(response.output)
-        : setError(response);
+      setError(response as any);
       setIsLoading(false);
     } else {
       setGeneratedPrompt(response.output);
@@ -113,9 +111,7 @@ const Home: NextPageWithLayout = () => {
 
       let response2 = (await res2.json()) as ResponseData;
       if (res2.status !== 200) {
-        response2 instanceof Object
-          ? setError(response2.output)
-          : setError(response2);
+        setError(response2 as any);
         setIsLoading(false);
       } else {
         setGeneratedImage(response2.output);
@@ -124,7 +120,7 @@ const Home: NextPageWithLayout = () => {
     }
     setTimeout(() => {
       setIsLoading(false);
-    }, 600);
+    }, 1300);
   };
 
   // // moch pokemon generation
@@ -150,6 +146,12 @@ const Home: NextPageWithLayout = () => {
   //     }, 600);
   //   }, 16000);
   // };
+
+  console.log({
+    originalImage,
+    generatedPrompt,
+    generatedImage,
+  });
 
   return (
     <>
