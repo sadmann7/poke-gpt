@@ -1,7 +1,9 @@
+import CompareSlider from "@/components/CompareSlider";
 import DefaultLayout from "@/components/layouts/DefaultLayout";
 import Pokeball from "@/components/Pokeball";
 import Button from "@/components/ui/Button";
 import FileInput from "@/components/ui/FileInput";
+import Toggle from "@/components/ui/Toggle";
 import type { NextPageWithLayout } from "@/pages/_app";
 import type {
   OriginalImage,
@@ -30,9 +32,9 @@ const Home: NextPageWithLayout = () => {
   );
   const [generatedPrompt, setGeneratedPrompt] = useState<string | null>(null);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
-  const [sideBySide, setSideBySide] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isDownloading, setIsDownloading] = useState<boolean>(false);
+  const [isComparing, setIsComparing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // react-hook-form
@@ -126,17 +128,22 @@ const Home: NextPageWithLayout = () => {
 
   // moch pokemon generation
   const mockGeneratePokemon = () => {
+    setOriginalImage(null);
+    setGeneratedPrompt(null);
+    setGeneratedImage(null);
     setIsLoading(true);
     setTimeout(() => {
-      setGeneratedPrompt("A pokemon with a blue body and a red head");
       setOriginalImage({
         name: "tumblr_9db78b4044f75f24f612f4943501e419_2b620c58_2048",
         url: "https://res.cloudinary.com/dasxoa9r4/image/upload/v1679751365/poke-gpt/pepgd5gycsvpzjmvjr0f.jpg",
       });
+      setGeneratedPrompt("A pokemon with a blue body and a red head");
       setGeneratedImage(
         "https://res.cloudinary.com/dasxoa9r4/image/upload/v1679751365/poke-gpt/pepgd5gycsvpzjmvjr0f.jpg"
       );
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 600);
     }, 16000);
   };
 
@@ -158,25 +165,68 @@ const Home: NextPageWithLayout = () => {
           </div>
           <Button
             aria-label="Mock generate pokemon"
-            onClick={mockGeneratePokemon}
             className="w-full max-w-lg"
+            onClick={mockGeneratePokemon}
           >
             Mock generate pokemon
           </Button>
-
           {isLoading ? (
             <Pokeball className="h-60 w-60" isGenerated={!!generatedImage} />
-          ) : !originalImage ? (
+          ) : originalImage && generatedImage ? (
+            <div className="grid w-full place-items-center gap-8">
+              <Toggle
+                enabled={isComparing}
+                setEnabled={setIsComparing}
+                enabledLabel="Compare"
+                disabledLabel="Side by side"
+              />
+              {isComparing ? (
+                <CompareSlider
+                  itemOneName={originalImage.name ?? "original"}
+                  itemOneUrl={originalImage.url}
+                  itemTwoName="Generated pokemon"
+                  itemTwoUrl={generatedImage}
+                  className="aspect-square max-h-[480px] rounded-xl"
+                />
+              ) : (
+                <div className="flex w-full flex-col items-center gap-5 sm:flex-row">
+                  <div className="grid w-full place-items-center gap-2 sm:w-1/2">
+                    <h2 className="text-base font-medium text-white sm:text-lg">
+                      Original image
+                    </h2>
+                    <Image
+                      src={originalImage.url}
+                      alt={originalImage.name ?? "original"}
+                      width={480}
+                      height={480}
+                      className="rounded-xl"
+                      priority
+                    />
+                  </div>
+                  <div className="grid w-full place-items-center gap-2 sm:w-1/2">
+                    <h2 className="text-base font-medium text-white sm:text-lg">
+                      Generated pokemon
+                    </h2>
+                    <Image
+                      src={generatedImage}
+                      alt={"Generated pokemon"}
+                      width={480}
+                      height={480}
+                      className="rounded-xl"
+                      priority
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
             <form
               aria-label="Generate pokemon form"
               className="grid w-full max-w-lg gap-8"
               onSubmit={handleSubmit(onSubmit)}
             >
               <fieldset className="grid gap-5">
-                <label
-                  htmlFor="image"
-                  className="sr-only text-sm font-medium sm:text-base"
-                >
+                <label htmlFor="image" className="sr-only">
                   Upload your image
                 </label>
                 <FileInput
@@ -203,39 +253,6 @@ const Home: NextPageWithLayout = () => {
                 Generate pokemon
               </Button>
             </form>
-          ) : (
-            <div className="flex w-full flex-col items-center gap-5 sm:flex-row">
-              <div className="grid w-full place-items-center gap-2 sm:w-1/2">
-                <h2 className="text-base font-medium text-white sm:text-lg">
-                  Original image
-                </h2>
-                <Image
-                  src={originalImage.url}
-                  alt={originalImage.name ?? "original"}
-                  width={480}
-                  height={480}
-                  className="rounded-xl"
-                  priority
-                />
-              </div>
-              <div className="grid w-full place-items-center gap-2 sm:w-1/2">
-                <h2 className="text-base font-medium text-white sm:text-lg">
-                  Generated pokemon
-                </h2>
-                {generatedImage ? (
-                  <Image
-                    src={generatedImage as string}
-                    alt={"Generated pokemon"}
-                    width={480}
-                    height={480}
-                    className="rounded-xl"
-                    priority
-                  />
-                ) : (
-                  <div className="aspect-square w-full">Skeleton loading</div>
-                )}
-              </div>
-            </div>
           )}
         </div>
       </main>

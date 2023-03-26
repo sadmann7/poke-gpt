@@ -13,7 +13,7 @@ const Pokeball = ({ isGenerated, ...props }: PokeballProps) => {
     if (!pokeballRef.current) return;
     pokeballRef.current.classList.add(styles.loading);
     pokeballRef.current.classList.toggle(
-      isGenerated ? styles.success : styles.failure
+      isGenerated ? styles.failure : styles.success
     );
   }, [isGenerated]);
 

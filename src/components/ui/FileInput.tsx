@@ -116,7 +116,7 @@ const FileInput = <TFieldValues extends FieldValues>({
         <Loader2 className="h-16 w-16 animate-spin" />
       ) : selectedFile ? (
         previewType === "image" ? (
-          <div className="group relative aspect-square h-full max-h-[420px] w-full overflow-hidden rounded-md">
+          <div className="group relative aspect-square h-full max-h-[420px] w-full overflow-hidden rounded-lg">
             {isDragActive ? (
               <div className="absolute inset-0 grid h-full w-full place-items-center bg-gray-900/70">
                 <div className="grid place-items-center gap-2 text-gray-200 sm:px-10">
@@ -133,7 +133,7 @@ const FileInput = <TFieldValues extends FieldValues>({
                 </div>
               </div>
             ) : (
-              <div className="absolute inset-0 grid h-full w-full place-items-center rounded-md bg-gray-900/70 opacity-0 transition-opacity group-hover:opacity-100">
+              <div className="absolute inset-0 grid h-full w-full place-items-center rounded-lg bg-gray-900/70 opacity-0 transition-opacity group-hover:opacity-100">
                 <div className="grid place-items-center gap-2">
                   <div className="flex items-center gap-2 text-gray-100">
                     <CheckCircle className="h-5 w-5" aria-hidden="true" />
@@ -151,7 +151,7 @@ const FileInput = <TFieldValues extends FieldValues>({
               src={URL.createObjectURL(selectedFile)}
               alt={selectedFile.name ?? "preview"}
               fill
-              className="absolute inset-0 -z-10 rounded-md object-cover"
+              className="absolute inset-0 -z-10 rounded-lg object-cover"
               loading="lazy"
             />
           </div>

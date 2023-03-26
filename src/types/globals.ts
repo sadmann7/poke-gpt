@@ -1,22 +1,12 @@
 import type { Dispatch, SetStateAction } from "react";
-import type { DropEvent, FileRejection } from "react-dropzone";
 
-// generics
 export type SetState<T> = Dispatch<SetStateAction<T>>;
 
-// file input
+// file
 export type OriginalImage = {
   name: string;
   url: string;
 };
-
-export type OnDrop =
-  | (<T extends File>(
-      acceptedFiles: T[],
-      fileRejections: FileRejection[],
-      event: DropEvent
-    ) => void)
-  | undefined;
 
 export type UploadedFile = {
   publicId: string;
@@ -43,15 +33,18 @@ export type PromptToPokemonBody = {
   };
 };
 
-export type PredictionResult = {
+export type ResponseData = {
+  id: string;
+  input: string | null;
+  output: string | null;
+};
+
+export type PredictionResult<TInput> = {
   completed_at: string;
   created_at: string;
   error: string | null;
   id: string;
-  input: {
-    image: string;
-    target_age: string;
-  };
+  input: TInput;
   logs: string;
   metrics: {
     predict_time: number;
@@ -65,10 +58,4 @@ export type PredictionResult = {
   };
   version: string;
   webhook_completed: null;
-};
-
-export type ResponseData = {
-  id: string;
-  input: string | null;
-  output: string | null;
 };
