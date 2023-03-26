@@ -9,7 +9,7 @@ module.exports = {
     extend: {
       screens: {
         xxs: "320px",
-        xs: "480px",
+        xs: "448px",
       },
       animation: {
         swing: "swing 3000ms infinite",

@@ -10,7 +10,9 @@ import type {
   ResponseData,
   UploadedFile,
 } from "@/types/globals";
+import { downloadFile } from "@/utils/stuffs";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertTriangle, Download, Loader2, Upload } from "lucide-react";
 import Head from "next/head";
 import Image from "next/image";
 import { useState } from "react";
@@ -34,8 +36,8 @@ const Home: NextPageWithLayout = () => {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isComparing, setIsComparing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   // react-hook-form
   const { handleSubmit, formState, setValue, control, reset } = useForm<Inputs>(
@@ -153,7 +155,7 @@ const Home: NextPageWithLayout = () => {
         <title>PokeGPT</title>
       </Head>
       <main className="w-full pt-40 pb-32 sm:pt-32">
-        <div className="container grid max-w-6xl place-items-center gap-12 sm:gap-14">
+        <div className="container grid max-w-5xl place-items-center gap-12 sm:gap-14">
           <div className="grid max-w-4xl place-items-center gap-5">
             <h1 className="w-full text-center text-4xl font-bold leading-tight text-gray-200 sm:text-6xl sm:leading-tight">
               Generating <span className="text-blue-500">pokemons</span> from
@@ -165,13 +167,36 @@ const Home: NextPageWithLayout = () => {
           </div>
           <Button
             aria-label="Mock generate pokemon"
-            className="w-full max-w-lg"
+            className="w-fit"
             onClick={mockGeneratePokemon}
           >
             Mock generate pokemon
           </Button>
           {isLoading ? (
-            <Pokeball className="h-60 w-60" isGenerated={!!generatedImage} />
+            <div className="grid w-full place-items-center gap-5">
+              <h2 className="text-lg font-medium text-gray-50 sm:text-xl">
+                Generating pokemon...
+              </h2>
+              <Pokeball className="h-60 w-60" isGenerated={!!generatedImage} />
+              <p className="text-sm text-gray-400 sm:text-base">
+                This might take a while
+              </p>
+            </div>
+          ) : error ? (
+            <div role="alert" className="grid w-full place-items-center gap-5">
+              <AlertTriangle className="h-24 w-24 animate-pulse text-red-400" />
+              <h2 className="text-lg font-medium text-gray-50 sm:text-xl">
+                Something went wrong
+              </h2>
+              <p className="text-sm text-gray-400 sm:text-base">{error}</p>
+              <Button
+                aria-label="Try again"
+                className="w-fit"
+                onClick={mockGeneratePokemon}
+              >
+                Try again
+              </Button>
+            </div>
           ) : originalImage && generatedImage ? (
             <div className="grid w-full place-items-center gap-8">
               <Toggle
@@ -189,9 +214,9 @@ const Home: NextPageWithLayout = () => {
                   className="aspect-square max-h-[480px] rounded-xl"
                 />
               ) : (
-                <div className="flex w-full flex-col items-center gap-5 sm:flex-row">
+                <div className="flex w-full flex-col items-center gap-6 sm:flex-row sm:gap-4">
                   <div className="grid w-full place-items-center gap-2 sm:w-1/2">
-                    <h2 className="text-base font-medium text-white sm:text-lg">
+                    <h2 className="text-base font-medium text-gray-50 sm:text-lg">
                       Original image
                     </h2>
                     <Image
@@ -204,7 +229,7 @@ const Home: NextPageWithLayout = () => {
                     />
                   </div>
                   <div className="grid w-full place-items-center gap-2 sm:w-1/2">
-                    <h2 className="text-base font-medium text-white sm:text-lg">
+                    <h2 className="text-base font-medium text-gray-50 sm:text-lg">
                       Generated pokemon
                     </h2>
                     <Image
@@ -218,14 +243,50 @@ const Home: NextPageWithLayout = () => {
                   </div>
                 </div>
               )}
+              <div className="flex w-full max-w-sm flex-col items-center justify-center gap-4 sm:flex-row">
+                <Button
+                  aria-label="Generate another pokemon"
+                  className="w-full gap-2 text-sm sm:text-base"
+                  onClick={() => {
+                    setOriginalImage(null);
+                    setGeneratedPrompt(null);
+                    setGeneratedImage(null);
+                  }}
+                >
+                  <Upload className="h-4 w-4 stroke-2" aria-hidden="true" />
+                  <span className="whitespace-nowrap">Generate again</span>
+                </Button>
+                <Button
+                  aria-label="Download generated pokemon"
+                  variant="secondary"
+                  className="w-full gap-2 text-sm sm:text-base"
+                  onClick={() => {
+                    downloadFile(
+                      generatedImage,
+                      "generated-pokemon.png",
+                      setIsDownloading
+                    );
+                  }}
+                >
+                  {isDownloading ? (
+                    <Loader2
+                      className="h-4 w-4 animate-spin"
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    <Download className="h-4 w-4" aria-hidden="true" />
+                  )}
+                  <span className="whitespace-nowrap">Download pokemon</span>
+                </Button>
+              </div>
             </div>
           ) : (
             <form
               aria-label="Generate pokemon form"
-              className="grid w-full max-w-lg gap-8"
+              className="grid w-full max-w-lg place-items-center gap-8"
               onSubmit={handleSubmit(onSubmit)}
             >
-              <fieldset className="grid gap-5">
+              <fieldset className="grid w-full gap-5">
                 <label htmlFor="image" className="sr-only">
                   Upload your image
                 </label>
@@ -245,7 +306,7 @@ const Home: NextPageWithLayout = () => {
               </fieldset>
               <Button
                 aria-label="Generate pokemon"
-                className="w-full"
+                className="w-fit"
                 isLoading={isLoading}
                 loadingVariant="dots"
                 disabled={isLoading}

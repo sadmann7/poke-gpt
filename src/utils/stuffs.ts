@@ -1,10 +1,11 @@
+import type { SetState } from "@/types/globals";
 import { toast } from "react-hot-toast";
 
 // download file
 export const downloadFile = (
   url: string,
   filename: string,
-  setIsDownloading: React.Dispatch<React.SetStateAction<boolean>>
+  setIsDownloading: SetState<boolean>
 ) => {
   setIsDownloading(true);
   fetch(url, {

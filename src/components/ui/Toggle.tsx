@@ -1,6 +1,6 @@
 import type { SetState } from "@/types/globals";
 import { Switch } from "@headlessui/react";
-import { forwardRef } from "react";
+import * as React from "react";
 import { twMerge } from "tailwind-merge";
 
 type ToggleProps = {
@@ -12,7 +12,10 @@ type ToggleProps = {
   srText?: string;
 } & React.ComponentPropsWithoutRef<typeof Switch.Group>;
 
-const Toggle = forwardRef<React.ElementRef<typeof Switch.Group>, ToggleProps>(
+const Toggle = React.forwardRef<
+  React.ElementRef<typeof Switch.Group>,
+  ToggleProps
+>(
   (
     {
       className = "",
@@ -51,6 +54,7 @@ const Toggle = forwardRef<React.ElementRef<typeof Switch.Group>, ToggleProps>(
             )}
             disabled={disabled}
           >
+            {/* need to provide srText when the labels are disabled */}
             <span className="sr-only">{srText}</span>
             <span
               aria-hidden="true"
