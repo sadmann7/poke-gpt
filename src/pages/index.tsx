@@ -40,9 +40,9 @@ const Home: NextPageWithLayout = () => {
   const [isDownloading, setIsDownloading] = useState(false);
 
   // react-hook-form
-  const { handleSubmit, formState, setValue, control, reset } = useForm<Inputs>(
-    { resolver: zodResolver(schema) }
-  );
+  const { handleSubmit, formState, setValue, reset } = useForm<Inputs>({
+    resolver: zodResolver(schema),
+  });
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     console.log(data);
     if (!(data.image instanceof File)) return;
@@ -97,7 +97,9 @@ const Home: NextPageWithLayout = () => {
 
     let response = (await res.json()) as ResponseData;
     if (res.status !== 200) {
-      setError(response as any);
+      response instanceof Object
+        ? setError(response.output)
+        : setError(response);
       setIsLoading(false);
     } else {
       setGeneratedPrompt(response.output);
@@ -111,7 +113,9 @@ const Home: NextPageWithLayout = () => {
 
       let response2 = (await res2.json()) as ResponseData;
       if (res2.status !== 200) {
-        setError(response2 as any);
+        response2 instanceof Object
+          ? setError(response2.output)
+          : setError(response2);
         setIsLoading(false);
       } else {
         setGeneratedImage(response2.output);
@@ -133,6 +137,9 @@ const Home: NextPageWithLayout = () => {
     setOriginalImage(null);
     setGeneratedPrompt(null);
     setGeneratedImage(null);
+    setError(null);
+    setSelectedFile(null);
+    reset();
     setIsLoading(true);
     setTimeout(() => {
       setOriginalImage({
@@ -251,6 +258,9 @@ const Home: NextPageWithLayout = () => {
                     setOriginalImage(null);
                     setGeneratedPrompt(null);
                     setGeneratedImage(null);
+                    setError(null);
+                    setSelectedFile(null);
+                    reset();
                   }}
                 >
                   <Upload className="h-4 w-4 stroke-2" aria-hidden="true" />

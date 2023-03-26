@@ -1,4 +1,8 @@
-import type { ImageToPromptBody, ResponseData } from "@/types/globals";
+import type {
+  ClipInterrogatorBody,
+  ImageToPromptBody,
+  ResponseData,
+} from "@/types/globals";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 interface ExtendedNextApiRequest extends NextApiRequest {
@@ -14,10 +18,19 @@ export default async function handler(
   const { imageUrl } = req.body;
 
   // POST request to Replicate to start the generation process
-  const responseBody: ImageToPromptBody = {
-    version: "50adaf2d3ad20a6f911a8a9e3ccf777b263b8596fbd2c8fc26e8888f8a0edbb5",
+  // const responseBody: ImageToPromptBody = {
+  //   version: "50adaf2d3ad20a6f911a8a9e3ccf777b263b8596fbd2c8fc26e8888f8a0edbb5",
+  //   input: {
+  //     image: imageUrl,
+  //   },
+  // };
+
+  const responseBody: ClipInterrogatorBody = {
+    version: "a4a8bafd6089e1716b06057c42b19378250d008b80fe87caa5cd36d40c1eda90",
     input: {
       image: imageUrl,
+      clip_model_name: "ViT-L-14/openai",
+      mode: "fast",
     },
   };
 

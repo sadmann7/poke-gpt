@@ -22,6 +22,15 @@ export type ImageToPromptBody = {
   };
 };
 
+export type ClipInterrogatorBody = {
+  version: string;
+  input: {
+    image: string;
+    clip_model_name: "ViT-L-14/openai" | "ViT-H-14/laion2b_s32b_b79k";
+    mode: "best" | "fast";
+  };
+};
+
 export type PromptToPokemonBody = {
   version: string;
   input: {
