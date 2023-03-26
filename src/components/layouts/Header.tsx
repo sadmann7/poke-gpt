@@ -29,9 +29,12 @@ const Header = () => {
         <Link
           aria-label="navigate to home page"
           href="/"
-          className="flex items-center gap-1 text-gray-50 transition-colors hover:text-gray-100"
+          className="group flex items-center gap-1 text-gray-50 transition-colors hover:text-gray-100"
         >
-          <Icons.logo className="h-7 w-7" aria-hidden="true" />
+          <Icons.logo
+            className="h-8 w-8 group-hover:animate-swing"
+            aria-hidden="true"
+          />
           <span className="text-xl font-medium">PokeGPT</span>
         </Link>
         <a

@@ -6,21 +6,83 @@ export const Icons = {
   logo: (props: LucideProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="44"
-      height="44"
-      viewBox="0 0 24 24"
-      strokeWidth="1.5"
-      stroke="currentColor"
-      fill="none"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="icon icon-tabler icon-tabler-pokeball"
+      width="150"
+      height="150"
+      viewBox="0 0 100 100"
       {...props}
     >
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <circle cx="9" cy="9" r="9" transform="translate(3 3)" />
-      <circle cx="12" cy="12" r="3" />
-      <path d="M3 12h6m6 0h6" />
+      <g transform="translate(50 50) scale(0.8)">
+        <g transform="translate(0 50)">
+          <g className="gravity">
+            <g transform="translate(0 -50)">
+              <g className="ball" transform="scale(1 1)">
+                <g className="bottom">
+                  <path
+                    fill="#ffffff"
+                    stroke="#303030"
+                    strokeWidth="5"
+                    d="M -47.5 0 a 47.5 47.5 0 0 0 95 0z"
+                  ></path>
+                </g>
+                <g>
+                  <path
+                    fill="#f15d5f"
+                    d="M -47.5 0 a 47.5 47.5 0 0 1 95 0"
+                  ></path>
+                  <path
+                    fill="none"
+                    stroke="#ffffff"
+                    strokeWidth="5"
+                    strokeLinecap="round"
+                    strokeDasharray="0 15 9 9 20 100"
+                    d="M -38 -0 a 38 38 0 0 1 76 0"
+                  ></path>
+                  <path
+                    fill="none"
+                    stroke="#303030"
+                    strokeWidth="5"
+                    d="M -47.5 0 a 47.5 47.5 0 0 1 95 0z"
+                  ></path>
+                </g>
+                <g transform="scale(1 0)">
+                  <path
+                    fill="#303030"
+                    stroke="#303030"
+                    strokeWidth="5"
+                    strokeLinejoin="round"
+                    d="M -47.5 -10 a 190 190 0 0 1 95 0 a 190 190 0 0 1 -95 0"
+                  ></path>
+                  <path
+                    fill="#303030"
+                    stroke="#303030"
+                    strokeWidth="5"
+                    strokeLinejoin="round"
+                    d="M -47.5 5 a 160 160 0 0 0 95 0 a 180 180 0 0 0 -95 0"
+                  ></path>
+                </g>
+                <g>
+                  <circle
+                    fill="#ffffff"
+                    stroke="#303030"
+                    strokeWidth="5"
+                    cx="0"
+                    cy="0"
+                    r="12"
+                  ></circle>
+                  <circle
+                    fill="#ffffff"
+                    stroke="#303030"
+                    strokeWidth="3"
+                    cx="0"
+                    cy="0"
+                    r="6"
+                  ></circle>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
     </svg>
   ),
   gitHub: (props: LucideProps) => (

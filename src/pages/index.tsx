@@ -1,4 +1,5 @@
 import DefaultLayout from "@/components/layouts/DefaultLayout";
+import Pokeball from "@/components/Pokeball";
 import Button from "@/components/ui/Button";
 import FileInput from "@/components/ui/FileInput";
 import { NextPageWithLayout } from "@/pages/_app";
@@ -9,7 +10,6 @@ import type {
 } from "@/types/globals";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Head from "next/head";
-import Image from "next/image";
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -72,7 +72,7 @@ const Home: NextPageWithLayout = () => {
           name: image.name,
           url: uploadedFile.secureUrl,
         });
-        setIsLoading(false);
+        setIsLoading(true);
         await generatePokemon(uploadedFile.secureUrl);
       }
     };
@@ -80,7 +80,6 @@ const Home: NextPageWithLayout = () => {
 
   // generate pokemon from replicate
   const generatePokemon = async (imageUrl: string) => {
-    // generate prompt
     await new Promise((resolve) => setTimeout(resolve, 200));
     setIsLoading(true);
     const res = await fetch("/api/generatePrompt", {
@@ -133,7 +132,7 @@ const Home: NextPageWithLayout = () => {
         <div className="container grid max-w-6xl place-items-center gap-12 sm:gap-14">
           <div className="grid max-w-4xl place-items-center gap-5">
             <h1 className="w-full text-center text-4xl font-bold leading-tight text-gray-200 sm:text-6xl sm:leading-tight">
-              Generating <span className="text-indigo-500">pokemons</span> from
+              Generating <span className="text-blue-500">pokemons</span> from
               your images using AI
             </h1>
             <p className="w-full text-center text-lg text-gray-400 sm:text-xl">
@@ -176,6 +175,7 @@ const Home: NextPageWithLayout = () => {
               Generate pokemon
             </Button>
           </form>
+          <Pokeball isLoading={!isLoading} />
         </div>
       </main>
     </>

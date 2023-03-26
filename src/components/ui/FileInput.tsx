@@ -122,7 +122,7 @@ const FileInput = <TFieldValues extends FieldValues>({
                 <div className="grid place-items-center gap-2 text-gray-200 sm:px-10">
                   <Icons.logo
                     className={twMerge(
-                      "h-9 w-9 group-hover:animate-bounce",
+                      "h-14 w-14 group-hover:animate-bounce",
                       isDragActive ? "animate-bounce" : ""
                     )}
                     aria-hidden="true"
@@ -164,7 +164,7 @@ const FileInput = <TFieldValues extends FieldValues>({
         <div className="grid place-items-center gap-2 text-gray-200 sm:px-10">
           <Icons.logo
             className={twMerge(
-              "h-9 w-9 group-hover:animate-bounce",
+              "h-14 w-14 group-hover:animate-bounce",
               isDragActive ? "animate-bounce" : ""
             )}
             aria-hidden="true"
@@ -174,7 +174,7 @@ const FileInput = <TFieldValues extends FieldValues>({
       ) : (
         <div className="group grid place-items-center gap-1 sm:px-10">
           <Icons.logo
-            className="h-9 w-9 text-gray-200 group-hover:animate-spin"
+            className="h-14 w-14 text-gray-200 group-hover:animate-swing"
             aria-hidden="true"
           />
           <p className="mt-2 text-base font-medium text-gray-200 sm:text-lg">

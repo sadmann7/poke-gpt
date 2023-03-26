@@ -29,8 +29,3 @@ export const downloadFile = (
       setIsDownloading(false);
     });
 };
-
-// sanitize string
-export const sanitizeString = (str: string) => {
-  return str.replace(/[^a-zA-Z0-9]/g, "");
-};
