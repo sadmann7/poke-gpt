@@ -7,12 +7,21 @@ interface ExtendedNextApiRequest extends NextApiRequest {
   };
 }
 
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "2mb",
+    },
+  },
+};
+
 export default async function handler(
   req: ExtendedNextApiRequest,
   res: NextApiResponse<ResponseData | string>
 ) {
   try {
     const { prompt } = req.body;
+    console.log(prompt);
 
     // POST request to Replicate to start the image restoration generation process
     const responseBody: PromptToPokemonBody = {

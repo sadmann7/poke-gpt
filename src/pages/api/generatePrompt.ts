@@ -17,6 +17,7 @@ export default async function handler(
 ) {
   try {
     const { imageUrl } = req.body;
+    console.log(imageUrl);
 
     // POST request to Replicate to start the image restoration generation process
     // const responseBody: ImageToPromptBody = {
